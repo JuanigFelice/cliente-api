@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.banco.cliente_api.exception.ClienteNotFoundException;
+import com.banco.cliente_api.exception.ClientesPorProductoNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory; 
@@ -51,9 +52,8 @@ public class ClienteController {
     }
 
     // Recuperar todos los clientes
-    // Solo ADMINS y MODERATORS pueden ver la lista completa.
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
     public ResponseEntity<List<ClienteResponseDTO>> getAllClientes() {
     	logger.info("Recibida solicitud para obtener todos los clientes.");
     	
@@ -68,7 +68,7 @@ public class ClienteController {
     // Si USER puede ver CUALQUIER cliente, usa hasRole('USER').
     // Si solo los logueados pueden ver, usa isAuthenticated().
     @GetMapping("/{dni}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')") // Permitir a cualquier rol ver un cliente
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('USER')")
     public ResponseEntity<ClienteResponseDTO> getClienteByDni(@PathVariable String dni) {
     	logger.info("Recibida solicitud para obtener cliente con DNI: {}", dni);
     	
@@ -95,8 +95,7 @@ public class ClienteController {
         return ResponseEntity.ok(dtoConverter.convertToDto(clienteActualizado));
                
     }
-
-    /*** Este metodo podria estar de mas o bien podria ser una extension de la misma API ***/
+    
     // Recuperar clientes por producto bancario 
     // Todos pueden realizar esta búsqueda.
     @GetMapping("/por-producto/{codigoProducto}")
@@ -105,11 +104,11 @@ public class ClienteController {
     	logger.info("Recibida solicitud para obtener clientes por producto bancario con código: {}", codigoProducto);
     	
         List<ClienteResponseDTO> clientes = clienteService.getClientesByProductoBancario(codigoProducto).stream()
-                											.map(dtoConverter::convertToDto)
-                											.toList();
+                                                        .map(dtoConverter::convertToDto)
+                                                        .toList();
         if (clientes.isEmpty()) {
-        	logger.warn("No se encontraron clientes para el producto bancario {}.", codigoProducto);
-            return ResponseEntity.noContent().build();
+            logger.warn("No se encontraron clientes para el producto bancario {}.", codigoProducto);
+            throw new ClientesPorProductoNotFoundException(codigoProducto);
         }
         logger.debug("Se encontraron {} clientes para el producto bancario {}.", clientes.size(), codigoProducto);
         return ResponseEntity.ok(clientes);
@@ -119,11 +118,16 @@ public class ClienteController {
     // Solo ADMIN puede eliminar clientes.
     @DeleteMapping("/{dni}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteCliente(@PathVariable String dni) {
-    	logger.info("Recibida solicitud para eliminar cliente con DNI: {}", dni);
-    	
+    public ResponseEntity<?> deleteCliente(@PathVariable String dni) {
+        logger.info("Recibida solicitud para eliminar cliente con DNI: {}", dni);
         clienteService.deleteCliente(dni);
         logger.info("Cliente con DNI {} eliminado exitosamente.", dni);
-        return ResponseEntity.noContent().build();       
+        // JSON de confirmación
+        return ResponseEntity.ok().body(
+            java.util.Map.of(
+                "message", "Cliente eliminado exitosamente",
+                "dni", dni
+            )
+        );
     }
 }

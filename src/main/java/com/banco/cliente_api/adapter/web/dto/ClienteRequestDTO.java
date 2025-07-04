@@ -10,8 +10,11 @@ import java.util.List;
 
 @Data
 public class ClienteRequestDTO {
-    @NotNull(message = "DNI no puede ser nulo")
-    private Long dni;
+	
+	@NotBlank(message = "DNI no puede ser nulo o vacío")
+	@Size(min = 7, max = 8, message = "DNI debe tener entre 7 y 8 dígitos") 
+	@Pattern(regexp = "^[0-9]+$", message = "DNI debe contener solo números")
+    private String dni;
 
     @NotBlank(message = "Nombre no puede ser vacío")
     @Size(max = 100, message = "Nombre no puede exceder los 100 caracteres")

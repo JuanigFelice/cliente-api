@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-@Component // Para que Spring la gestione como un Bean e inyecte
+@Component
 public class DtoConverter {
 
     public Cliente convertToEntity(ClienteRequestDTO dto) {
-        // Usamos el Builder de Lombok para una creación de objeto más limpia
+        // Builder de Lombok para una creación de objeto más limpia
         return Cliente.builder()
-                .dni(dto.getDni() != null ? String.valueOf(dto.getDni()) : null)
+                .dni(dto.getDni())
                 .nombre(dto.getNombre())
                 .apellido(dto.getApellido())
                 .calle(dto.getCalle())
@@ -28,10 +28,10 @@ public class DtoConverter {
     }
 
     public ClienteResponseDTO convertToDto(Cliente cliente) {
-        // Los DTOs son objetos simples de transferencia, 'new' es aceptable aquí
+       
         ClienteResponseDTO dto = new ClienteResponseDTO();
         dto.setId(cliente.getId());
-        dto.setDni(Long.valueOf(cliente.getDni()));
+        dto.setDni(cliente.getDni());
         dto.setNombre(cliente.getNombre());
         dto.setApellido(cliente.getApellido());
         dto.setCalle(cliente.getCalle());

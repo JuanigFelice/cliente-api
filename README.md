@@ -79,13 +79,16 @@ banco.app.jwtExpirationMs=86400000
 logging.level.com.banco.cliente_api=DEBUG
 
 🚀 Cómo Ejecutar la Aplicación
+
 1. Clonar el Repositorio
 Primero, clona este repositorio en tu máquina local:
+
 git clone https://github.com/JuanigFelice/cliente-api
 cd cliente-api
 
 2. Construir el Proyecto con Maven
 Navega al directorio raíz del proyecto (cliente-api) en tu terminal y ejecuta el siguiente comando Maven para construir el proyecto:
+
 mvn clean install
 
 3. Ejecutar la Aplicación

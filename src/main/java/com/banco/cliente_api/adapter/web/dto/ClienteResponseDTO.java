@@ -6,7 +6,7 @@ import java.util.Set;
 @Data
 public class ClienteResponseDTO {
     private Long id;
-    private Long dni;
+    private String dni;
     private String nombre;
     private String apellido;
     private String calle;

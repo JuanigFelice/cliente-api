@@ -1,9 +1,11 @@
 package com.banco.cliente_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Builder; // Añadido para el patrón Builder
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,15 +16,16 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // Habilita el patrón Builder para esta entidad
-@Table(name = "clientes") // Especifica el nombre de la tabla en la DB
+@Builder
+@Table(name = "clientes")
 public class Cliente {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String dni; // Asumiendo DNI puede ser String si tiene formato o letras
+    private String dni;
 
     @NotBlank(message = "Nombre no puede ser vacío")
     private String nombre;
@@ -30,18 +33,23 @@ public class Cliente {
     @NotBlank(message = "Apellido no puede ser vacío")
     private String apellido;
 
-    private String calle;
-    private Integer numero;
-    private String codigoPostal;
-    private String telefono;
-    private String celular;
+    private String 	calle;
 
+    @Min(value = 1, message = "El número de calle debe ser mayor a 0")
+    private Integer numero;
+    private String 	codigoPostal;
+    private String 	telefono;
+    private String 	celular;
+    
+    
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
         name = "cliente_producto",
         joinColumns = @JoinColumn(name = "cliente_id"),
         inverseJoinColumns = @JoinColumn(name = "producto_id")
     )
+    
+    @Builder.Default
     private Set<ProductoBancario> productosBancarios = new HashSet<>();
 
     // Métodos de ayuda para la gestión de la relación (opcional, pero buena práctica)

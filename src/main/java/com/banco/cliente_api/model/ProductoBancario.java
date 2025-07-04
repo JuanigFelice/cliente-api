@@ -25,7 +25,7 @@ public class ProductoBancario {
 
     @Column(unique = true, nullable = false)
     @NotBlank(message = "Código no puede ser vacío")
-    private String codigo; // por ejemplo: PZOF, CHEQ, TJCREDITO, TJDEBITO, CA, CC
+    private String codigo; // por ejemplo: PZOF, CHEQ, TJCREDITO, TJDEBITO, CJAHRR, CTACORR
 
     @NotBlank(message = "Descripción no puede ser vacía")
     private String descripcion; // por ejemplo: Plazo Fijo, Cheques, Tarjeta de Crédito, Tarjeta de Débito, Caja de Ahorro, Cuenta Corriente

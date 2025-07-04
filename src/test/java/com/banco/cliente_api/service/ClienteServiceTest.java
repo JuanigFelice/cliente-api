@@ -1,5 +1,6 @@
 package com.banco.cliente_api.service;
 
+import com.banco.cliente_api.exception.InvalidInputException;
 import com.banco.cliente_api.model.Cliente;
 import com.banco.cliente_api.model.ProductoBancario;
 import com.banco.cliente_api.repository.ClienteRepository;
@@ -51,35 +52,32 @@ public class ClienteServiceTest {
                 .productosBancarios(new HashSet<>()) // Importante inicializar el set
                 .build();
 
-        productoAhorro = new ProductoBancario(1L, "CA", "Caja de Ahorro");
-        productoCredito = new ProductoBancario(2L, "TC", "Tarjeta de Crédito");
+        productoAhorro = new ProductoBancario(1L, "CJAHRR", "Caja de Ahorro");
+        productoCredito = new ProductoBancario(2L, "TJCREDITO", "Tarjeta de Crédito");
     }
 
     @Test
     void testCrearClienteSinProductos() {
-        // Configurar el comportamiento del mock de clienteRepository.save()
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteEjemplo);
-
-        // Ejecutar el método a probar
-        Cliente clienteGuardado = clienteService.crearCliente(clienteEjemplo, Collections.emptySet());
+        // Verificar que la excepción InvalidInputException sea lanzada
+        InvalidInputException exception = assertThrows(InvalidInputException.class, () -> {
+            clienteService.crearCliente(clienteEjemplo, Collections.emptySet());
+        });
 
         // Aserciones
-        assertNotNull(clienteGuardado);
-        assertEquals("12345678", clienteGuardado.getDni());
-        assertTrue(clienteGuardado.getProductosBancarios().isEmpty()); // No debería tener productos
-        verify(clienteRepository, times(1)).save(clienteEjemplo); // Verificar que save fue llamado
+        assertEquals("Debe especificar al menos un producto bancario válido para el cliente.", exception.getMessage());
+        verify(clienteRepository, never()).save(any(Cliente.class)); // El save no debería ocurrir si lanza la excepción
         verifyNoInteractions(productoBancarioRepository); // No debería interactuar con productoBancarioRepository
     }
 
     @Test
     void testCrearClienteConProductosExistentes() {
         Set<String> codigosProductos = new HashSet<>();
-        codigosProductos.add("CA");
-        codigosProductos.add("TC");
+        codigosProductos.add("CJAHRR");
+        codigosProductos.add("TJCREDITO");
 
         // Configurar el comportamiento de los mocks de productoBancarioRepository
-        when(productoBancarioRepository.findByCodigo("CA")).thenReturn(Optional.of(productoAhorro));
-        when(productoBancarioRepository.findByCodigo("TC")).thenReturn(Optional.of(productoCredito));
+        when(productoBancarioRepository.findByCodigo("CJAHRR")).thenReturn(Optional.of(productoAhorro));
+        when(productoBancarioRepository.findByCodigo("TJCREDITO")).thenReturn(Optional.of(productoCredito));
 
         // Configurar el comportamiento del mock de clienteRepository.save()
         // El clienteEjemplo debe reflejar los productos asignados después del save
@@ -88,7 +86,7 @@ public class ClienteServiceTest {
         clienteConProductos.addProductoBancario(productoAhorro);
         clienteConProductos.addProductoBancario(productoCredito);
 
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteConProductos); // Retorna el cliente con productos
+        when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteConProductos);
 
         // Ejecutar el método a probar
         Cliente clienteGuardado = clienteService.crearCliente(clienteEjemplo, codigosProductos);
@@ -102,41 +100,36 @@ public class ClienteServiceTest {
         assertTrue(clienteGuardado.getProductosBancarios().contains(productoCredito));
 
         // Verificar interacciones con los mocks
-        verify(productoBancarioRepository, times(1)).findByCodigo("CA");
-        verify(productoBancarioRepository, times(1)).findByCodigo("TC");
-        verify(clienteRepository, times(1)).save(any(Cliente.class)); // save debe ser llamado una vez
+        verify(productoBancarioRepository, times(1)).findByCodigo("CJAHRR");
+        verify(productoBancarioRepository, times(1)).findByCodigo("TJCREDITO");
+        verify(clienteRepository, times(1)).save(any(Cliente.class)); 
     }
 
     @Test
     void testCrearClienteConProductosAlgunosNoExistentes() {
         Set<String> codigosProductos = new HashSet<>();
-        codigosProductos.add("CA");
+        codigosProductos.add("CJAHRR");
         codigosProductos.add("PROD_NO_EXISTE"); // Este producto no existirá
 
-        when(productoBancarioRepository.findByCodigo("CA")).thenReturn(Optional.of(productoAhorro));
+        // Configurar el comportamiento de los mocks de productoBancarioRepository
+        when(productoBancarioRepository.findByCodigo("CJAHRR")).thenReturn(Optional.of(productoAhorro));
         when(productoBancarioRepository.findByCodigo("PROD_NO_EXISTE")).thenReturn(Optional.empty());
 
-        Cliente clienteConUnProducto = Cliente.builder().id(1L).dni("12345678").nombre("Juan").apellido("Perez").build();
-        clienteConUnProducto.setProductosBancarios(new HashSet<>());
-        clienteConUnProducto.addProductoBancario(productoAhorro);
+        // Verificar que la excepción InvalidInputException sea lanzada
+        InvalidInputException exception = assertThrows(InvalidInputException.class, () -> {
+            clienteService.crearCliente(clienteEjemplo, codigosProductos);
+        });
 
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteConUnProducto);
-
-        Cliente clienteGuardado = clienteService.crearCliente(clienteEjemplo, codigosProductos);
-
-        assertNotNull(clienteGuardado);
-        assertEquals(1, clienteGuardado.getProductosBancarios().size());
-        assertTrue(clienteGuardado.getProductosBancarios().contains(productoAhorro));
-        assertFalse(clienteGuardado.getProductosBancarios().contains(productoCredito)); // No debería tener el otro producto
-
-        verify(productoBancarioRepository, times(1)).findByCodigo("CA");
+        // Aserciones
+        assertEquals("El producto bancario con código 'PROD_NO_EXISTE' no existe.", exception.getMessage());
+        verify(productoBancarioRepository, times(1)).findByCodigo("CJAHRR");
         verify(productoBancarioRepository, times(1)).findByCodigo("PROD_NO_EXISTE");
-        verify(clienteRepository, times(1)).save(any(Cliente.class));
+        verify(clienteRepository, never()).save(any(Cliente.class));
     }
 
     @Test
     void testGetAllClientes() {
-        List<Cliente> clientes = List.of(clienteEjemplo, new Cliente()); // Lista de clientes mock
+        List<Cliente> clientes = List.of(clienteEjemplo, new Cliente());
         when(clienteRepository.findAll()).thenReturn(clientes);
 
         List<Cliente> result = clienteService.getAllClientes();
@@ -209,7 +202,7 @@ public class ClienteServiceTest {
 
     @Test
     void testGetClientesByProductoBancario() {
-        String codigoProducto = "CA";
+        String codigoProducto = "CJAHRR";
         List<Cliente> clientesPorProducto = List.of(clienteEjemplo); // Un cliente que tiene ese producto
         when(clienteRepository.findByProductosBancarios_Codigo(codigoProducto)).thenReturn(clientesPorProducto);
 

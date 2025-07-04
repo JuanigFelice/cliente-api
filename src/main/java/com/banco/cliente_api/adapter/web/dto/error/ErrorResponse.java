@@ -8,24 +8,27 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
+@Data 
 @NoArgsConstructor
+@AllArgsConstructor
 public class ErrorResponse {
-    private int status; 	// Código de estado HTTP
-    private String error; 	// Nombre del error
-    private String message; // Mensaje detallado del error
-    private String path; 
-    
+
+    private int status;
+    private String error;
+    private String message;
+    private String path;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime timestamp;
-
-    /* Este metodo centraliza todos los mensajes de error para que sean del mismo formato */
+    
+     /*
+     * dejo este constructor personalizado para asegurar que el timestamp se setee automáticamente.
+     */
     public ErrorResponse(HttpStatus status, String message, String path) {
+        this.timestamp = LocalDateTime.now();
         this.status = status.value();
         this.error = status.getReasonPhrase();
         this.message = message;
         this.path = path;
-        this.timestamp = LocalDateTime.now();
     }
 }

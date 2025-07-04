@@ -1,7 +1,9 @@
 package com.banco.cliente_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +34,8 @@ public class Cliente {
     private String apellido;
 
     private String 	calle;
+
+    @Min(value = 1, message = "El número de calle debe ser mayor a 0")
     private Integer numero;
     private String 	codigoPostal;
     private String 	telefono;

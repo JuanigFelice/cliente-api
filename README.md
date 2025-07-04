@@ -1,6 +1,6 @@
 # API de Gestión de Clientes Bancarios
 
-![Build Status](https://github.com/JuanigFelice/cliente-api/workflows/Java%20CI/badge.svg) ![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=JuanigFelice_cliente-api&metric=alert_status) Esta es una API RESTful desarrollada con Spring Boot para la gestión de clientes bancarios y sus productos asociados. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los clientes, además de ofrecer un sistema de autenticación JWT para proteger los endpoints.
+Esta es una API RESTful desarrollada con Spring Boot para la gestión de clientes bancarios y sus productos asociados. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los clientes, además de ofrecer un sistema de autenticación JWT para proteger los endpoints.
 
 ---
 

@@ -70,14 +70,13 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
 # JWT Configuration (Clave Secreta y Tiempo de Expiracion del Token)
-# IMPORTANTE: Cambia esta clave por una cadena larga, aleatoria y MUY SEGURA en producción.
+# IMPORTANTE: en producción.
 # Debe tener al menos 32 caracteres para HS256, pero se recomienda más.
 banco.app.jwtSecret=SuperSecretaJWTKeyParaTuBanco1234567890abcdef
 # Tiempo de expiración del token JWT en milisegundos (ej: 86400000 ms = 24 horas)
 banco.app.jwtExpirationMs=86400000
 
 logging.level.com.banco.cliente_api=DEBUG
-server.port=8081
 
 🚀 Cómo Ejecutar la Aplicación
 1. Clonar el Repositorio

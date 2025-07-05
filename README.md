@@ -158,22 +158,6 @@ Opción B: Iniciar Sesión con Usuarios Precargados para Obtener el Token (recom
       }
 
 
-¡Claro que sí! Aquí tienes todo el contenido del README.md que hemos perfeccionado, presentado en un solo bloque de texto plano. Puedes copiar directamente este bloque y pegarlo en un nuevo archivo llamado README.md en la raíz de tu repositorio de GitHub.
-Recuerda hacer las siguientes sustituciones antes de pegar:
-    • https://github.com/JuanigFelice/cliente-api/ (en la sección de clonación) por la URL real de TU repositorio.
-    • JuanigFelice_cliente-api (en el badge de SonarCloud) por la clave real de tu proyecto si usas SonarCloud, o elimina el badge si solo usas SonarQube localmente.
-    • [Indicar tipo de licencia, ej. MIT License] (en la sección de Licencia) por el tipo de licencia que elijas (ej. MIT License).
-    • Asegúrate de crear un archivo LICENSE (sin extensión) en la raíz de tu repositorio con el texto completo de la licencia elegida.
-
-# API de Gestión de Clientes Bancarios
-
-![Build Status](https://github.com/JuanigFelice/cliente-api/workflows/Java%20CI/badge.svg)
-![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=JuanigFelice_cliente-api&metric=alert_status)
-
-Esta es una API RESTful desarrollada con Spring Boot para la gestión de clientes bancarios y sus productos asociados. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los clientes, además de ofrecer un sistema de autenticación JWT para proteger los endpoints.
-
----
-
 ## 💻 Tecnologías Utilizadas
 
 * **Java 17:** Lenguaje de programación.
